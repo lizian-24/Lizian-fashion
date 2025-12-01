@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reviews — Lizian Fashion</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
+header{background:black;color:white;padding:12px}
+.container{max-width:800px;margin:20px auto}
+.review{border:1px solid #eee;padding:12px;margin-bottom:10px;border-radius:6px}
+.thumb{max-width:120px;display:block;margin-top:8px}
+input, textarea, select{width:100%;padding:8px;margin:6px 0}
+button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer;background:black;color:white}
+</style>
+</head>
+<body>
+<header><h2>Customer Reviews</h2></header>
+<div class="container">
+  <h3>Leave a review</h3>
+  <input id="rname" placeholder="Your name"><br>
+  <label>Rating</label>
+  <select id="rating">
+    <option value="5">5 - Excellent</option>
+    <option value="4">4 - Good</option>
+    <option value="3">3 - Okay</option>
+    <option value="2">2 - Poor</option>
+    <option value="1">1 - Bad</option>
+  </select><br>
+  <textarea id="comment" placeholder="Tell others about your purchase"></textarea><br>
+  <label>Upload a photo (optional)</label><br>
+  <input type="file" id="photo" accept="image/*"><br>
+  <img id="preview" class="thumb" style="display:none"><br>
+  <button onclick="saveReview()">Submit review</button>
+
+  <h3>All Reviews</h3>
+  <div id="reviews"></div>
+</div>
+
+<script>
+const reviewsEl = document.getElementById('reviews');
+const preview = document.getElementById('preview');
+const photoInput = document.getElementById('photo');
+
+// preview uploaded photo
+photoInput.addEventListener('change',(e)=>{
+  const f = e.target.files[0];
+  if(!f) { preview.style.display='none'; return }
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    preview.src = evt.target.result;
+    preview.style.display = 'block';
+  }
+  reader.readAsDataURL(f);
+});
+
+// load reviews from localStorage
+let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+
+function displayReviews(){
+  reviewsEl.innerHTML = '';
+  if(reviews.length===0){ reviewsEl.innerHTML='<p>No reviews yet.</p>'; return; }
+  reviews.forEach(r=>{
+    reviewsEl.innerHTML += `
+      <div class="review">
+        <strong>${r.name}</strong> — Rating: ${r.rating}/5
+        <p>${r.comment}</p>
+        ${r.photo ? `<img src="${r.photo}" class="thumb">` : ''}
+      </div>
+    `;
+  });
+}
+
+// save review
+function saveReview(){
+  const name = document.getElementById('rname').value || 'Anonymous';
+  const rating = document.getElementById('rating').value;
+  const comment = document.getElementById('comment').value || '';
+  const photo = preview.src || '';
+
+  const review = { name, rating, comment, photo };
+  reviews.push(review);
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+
+  // reset form
+  document.getElementById('rname').value='';
+  document.getElementById('rating').value='5';
+  document.getElementById('comment').value='';
+  photoInput.value='';
+  preview.src='';
+  preview.style.display='none';
+
+  displayReviews();
+}
+
+// initial display
+displayReviews();
+</script>
+</body>
+</html>
