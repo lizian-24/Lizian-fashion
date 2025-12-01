@@ -1,10 +1,10 @@
-html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Lizian Fashion</title>
-  <style><!doctype
+  <style>
     body { font-family: Arial, sans-serif; margin:0; background:#fff; color:#222; }
     header { background:black; color:white; padding:15px 20px; display:flex; align-items:center; }
     header img { height:60px; margin-right:15px; }
@@ -50,9 +50,7 @@ html>
 
   <section class="section" id="products">
     <h2>Featured Designs</h2>
-    <div class="products" id="productContainer">
-      <!-- Products will be inserted here dynamically -->
-    </div>
+    <div class="products" id="productContainer"></div>
   </section>
 
   <section id="cart">
@@ -69,34 +67,27 @@ html>
   </footer>
 
   <script>
-    // --- PRODUCTS (edit here) ---
     const products = [
       { id:1, name:'Bubble High-Low Dress', price:4500, img:'bubble.jpg', stock:true },
       { id:2, name:'3-Way Convertible Dress', price:3800, img:'3way.jpg', stock:false },
       { id:3, name:'Custom Handmade Outfit', price:5000, img:'dress1.jpg', stock:true }
     ];
 
-    // load cart from localStorage so it persists across pages
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    function saveCart() {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
+    function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
 
     function addToCart(productId) {
       const p = products.find(x=>x.id===productId);
       if(!p) return alert('Product not found');
       if(!p.stock) return alert('Sorry — this item is out of stock.');
-      cart.push({ id:p.id, name:p.name, price:p.price });
+      const qty = Number(document.getElementById(`qty-${p.id}`).value);
+      for(let i=0;i<qty;i++) { cart.push({ id:p.id, name:p.name, price:p.price }); }
       saveCart();
       displayCart();
     }
 
-    function removeFromCart(index) {
-      cart.splice(index,1);
-      saveCart();
-      displayCart();
-    }
+    function removeFromCart(index) { cart.splice(index,1); saveCart(); displayCart(); }
 
     function displayCart() {
       const cartList = document.getElementById('cart-items');
@@ -109,7 +100,6 @@ html>
       document.getElementById('cart-total').textContent = total;
     }
 
-    // render products with stock indicator
     const productContainer = document.getElementById('productContainer');
     products.forEach(p => {
       const div = document.createElement('div');
@@ -118,137 +108,15 @@ html>
         <img src='${p.img}' alt='${p.name}'>
         <p>${p.name} - KES ${p.price}</p>
         <div class="actions">
-          ${p.stock ? `<select id='color-${p.id}' style='padding:5px'><option>Black</option><option>White</option><option>Red</option><option>Blue</option></select> <select id='qty-${p.id}' style='padding:5px'><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> <button onclick="addToCart(${p.id})">Add</button>` : `<span class="out-of-stock">Out of stock</span>`}
+          ${p.stock ? `<select id='color-${p.id}' style='padding:5px'><option>Black</option><option>White</option><option>Red</option><option>Blue</option></select>
+          <select id='qty-${p.id}' style='padding:5px'><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+          <button onclick="addToCart(${p.id})">Add</button>` : `<span class="out-of-stock">Out of stock</span>`}
           <a class="small" href="#">View</a>
         </div>`;
       productContainer.appendChild(div);
     });
 
-    // initialize
     displayCart();
   </script>
 </body>
-</html><!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Checkout — Lizian Fashion</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
-    header{background:black;color:white;padding:12px}
-    .container{max-width:700px;margin:20px auto}
-    .item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
-    .total{font-weight:bold;margin-top:10px}
-    button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer}
-    .whatsapp{background:#25D366;color:white}
-    .back{background:#ddd;margin-right:8px}
-  </style>
-</head>
-<body>
-  <header>
-    <h2>Checkout</h2>
-  </header>
-
-  <div class="container">
-    <div id="cart-list"></div>
-    <div class="total">Total: KES <span id="total">0</span></div>
-
-    <h3>Contact & Delivery</h3>
-    <label>Name</label><br>
-    <input id="name" placeholder="Your name" style="width:100%;padding:8px;margin:6px 0"><br>
-    <label>Phone (WhatsApp)</label><br>
-    <input id="phone" placeholder="07XXXXXXXX" style="width:100%;padding:8px;margin:6px 0"><br>
-    <label>Pickup / Delivery Address</label><br>
-    <textarea id="address" style="width:100%;padding:8px;margin:6px 0"></textarea>
-
-    <div style="margin-top:12px">
-      <button class="back" onclick="window.location.href='index.html'">Back to shop</button>
-      <button class="whatsapp" id="waBtn">Send order via WhatsApp</button>
-    </div>
-
-    <p class="small">We will receive your order message on WhatsApp and confirm payment & delivery details.</p>
-  </div>
-
-  <script>
-    // load cart
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const cartList = document.getElementById('cart-list');
-    let total = 0;
-    if(cart.length===0){ cartList.innerHTML = '<p>Your cart is empty.</p>' }
-    cart.forEach(c=>{
-      cartList.innerHTML += `<div class="item"><div>${c.name}</div><div>KES ${c.price}</div></div>`;
-      total += Number(c.price);
-    });
-    document.getElementById('total').textContent = total;
-
-    // WhatsApp send
-    // convert local number 0748508336 to international (Kenya) 254748508336
-    const sellerNumber = '254748508336';
-
-    document.getElementById('waBtn').addEventListener('click', ()=>{
-      if(cart.length===0) return alert('Cart is empty');
-      const name = document.getElementById('name').value || 'Customer';
-      const phone = document.getElementById('phone').value || '';
-      const address = document.getElementById('address').value || '';
-
-      let message = `Order from ${name}%0A`;
-      if(phone) message += `Contact: ${phone}%0A`;
-      if(address) message += `Address: ${address}%0A`;
-      message += `%0AItems:%0A`;
-      cart.forEach(c=>{ message += `${c.name} - KES ${c.price}%0A`; });
-      message += `%0ATotal: KES ${total}%0A`;
-      message += `%0AThanks%0A`;
-
-      // open WhatsApp web/mobile
-      const url = `https://wa.me/${sellerNumber}?text=${message}`;
-      window.open(url,'_blank');
-    });
-  </script>
-</body>
 </html>
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Reviews — Lizian Fashion</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
-    header{background:black;color:white;padding:12px}
-    .container{max-width:800px;margin:20px auto}
-    .review{border:1px solid #eee;padding:12px;margin-bottom:10px;border-radius:6px}
-    .thumb{max-width:120px;display:block;margin-top:8px}
-  </style>
-</head>
-<body>
-  <header><h2>Customer Reviews</h2></header>
-  <div class="container">
-    <h3>Leave a review</h3>
-    <input id="rname" placeholder="Your name" style="width:100%;padding:8px;margin:6px 0"><br>
-    <label>Rating</label>
-    <select id="rating" style="padding:8px;margin:6px 0">
-      <option value="5">5 - Excellent</option>
-      <option value="4">4 - Good</option>
-      <option value="3">3 - Okay</option>
-      <option value="2">2 - Poor</option>
-      <option value="1">1 - Bad</option>
-    </select><br>
-    <textarea id="comment" placeholder="Tell others about your purchase" style="width:100%;padding:8px;margin:6px 0"></textarea><br>
-    <label>Upload a photo (optional)</label><br>
-    <input type="file" id="photo" accept="image/*"><br>
-    <img id="preview" class="thumb" style="display:none"><br>
-    <button onclick="saveReview()">Submit review</button>
-
-    <h3>All Reviews</h3>
-    <div id="reviews"></div>
-  </div>
-
-  <script>
-    const reviewsEl = document.getElementById('reviews');
-    const preview = document.getElementById('preview');
-
-    document.getElementById('photo').addEventListener('change',(e)=>{
-      const f = e.target.files[0];
-      if(!f) { preview.style.display='none'; return }
-      const reader = new FileReader()
