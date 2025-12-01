@@ -89,4 +89,10 @@
   </script>
 </body>
 </html>
-
+// Remove item from cart
+function removeFromCart(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1); // remove item at position "index"
+    localStorage.setItem("cart", JSON.stringify(cart));
+    displayCart(); // refresh cart display
+}
