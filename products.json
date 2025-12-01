@@ -11,7 +11,7 @@
     "price": 3800,
     "image": "images/3way.jpg",
     "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "White", "Pink", "Green"]
+    "colors": ["Black", "White", "Pink", "yellow", "Green"]
   },
   {
     "name": "Custom Handmade Outfit",
