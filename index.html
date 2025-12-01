@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Lizian Fashion</title>
   <style>
     body { font-family: Arial, sans-serif; margin:0; background:#fff; color:#222; }
@@ -10,30 +10,35 @@
     header img { height:60px; margin-right:15px; }
     header h1 { font-size:26px; letter-spacing:2px; margin:0; }
     nav { margin-left:auto; }
-    nav button { padding:10px 20px; margin-left:10px; cursor:pointer; border:none; border-radius:5px; }
-    .hero { background-image: url('hero.jpg'); background-size:cover; background-position:center; height:70vh; display:flex; align-items:center; justify-content:center; flex-direction:column; color:white; text-shadow:0 0 10px black; }
-    .hero h1 { font-size:50px; margin:0; }
-    .hero p { font-size:20px; margin-top:10px; }
-    .btn { margin-top:20px; padding:12px 25px; background:white; color:black; font-weight:bold; border-radius:6px; text-decoration:none; transition:0.3s; }
+    nav a, nav button { padding:10px 14px; margin-left:10px; cursor:pointer; border:none; border-radius:5px; text-decoration:none; color:inherit; background:transparent; }
+    .hero { background-image: url('hero.jpg'); background-size:cover; background-position:center; height:60vh; display:flex; align-items:center; justify-content:center; flex-direction:column; color:white; text-shadow:0 0 10px black; }
+    .hero h1 { font-size:40px; margin:0; }
+    .hero p { font-size:18px; margin-top:8px; }
+    .btn { margin-top:12px; padding:10px 18px; background:white; color:black; font-weight:bold; border-radius:6px; text-decoration:none; transition:0.3s; }
     .btn:hover { background:#ddd; }
-    .section { padding:40px 20px; text-align:center; }
-    .products { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; padding:20px; }
-    .card { border:1px solid #ddd; border-radius:10px; overflow:hidden; background:white; }
+    .section { padding:30px 20px; text-align:center; }
+    .products { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; padding:20px; }
+    .card { border:1px solid #ddd; border-radius:10px; overflow:hidden; background:white; display:flex; flex-direction:column; }
     .card img { width:100%; height:260px; object-fit:cover; }
-    .card p { padding:10px; font-weight:bold; }
+    .card p { padding:10px; font-weight:bold; margin:0; }
+    .card .actions { padding:10px; display:flex; gap:8px; justify-content:space-between; align-items:center; }
     #cart { padding:20px; background:#f9f9f9; margin-top:30px; border-top:2px solid #ddd; }
     #cart ul { list-style:none; padding:0; }
     #cart li { margin-bottom:10px; }
+    .out-of-stock { color:crimson; font-weight:bold; }
     footer { background:black; color:white; padding:15px; text-align:center; margin-top:30px; }
+    .small { font-size:13px; color:#555; }
   </style>
 </head>
 <body>
   <header>
-    <img src="images/Logo.png"> alt="Lizian Fashion Logo">
+    <img src="images/logo.png" alt="Lizian Fashion Logo">
     <h1>Lizian Fashion</h1>
     <nav>
+      <a href="index.html">Home</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="review.html">Reviews</a>
       <button onclick="document.getElementById('cart').scrollIntoView()">Cart</button>
-      <button onclick="window.location.href='checkout.html'">Checkout</button>
     </nav>
   </header>
 
@@ -53,7 +58,10 @@
   <section id="cart">
     <h2>Your Cart</h2>
     <ul id="cart-items"></ul>
-    <button onclick="window.location.href='checkout.html'">Go to Checkout</button>
+    <div class="small">Total: KES <span id="cart-total">0</span></div>
+    <div style="margin-top:12px">
+      <button onclick="window.location.href='checkout.html'">Go to Checkout</button>
+    </div>
   </section>
 
   <footer>
@@ -61,38 +69,195 @@
   </footer>
 
   <script>
-    let cart = [];
-    function addToCart(item, price) {
-      cart.push({ item, price });
-      displayCart();
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-    function displayCart() {
-      const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = cart.map(c => `<li>${c.item} - KES ${c.price}</li>`).join('');
-    }
-
-    // Add new products easily
+    // --- PRODUCTS (edit here) ---
     const products = [
-      {name:'Bubble High-Low Dress', price:4500, img:'bubble.jpg'},
-      {name:'3-Way Convertible Dress', price:3800, img:'3way .jpg'},
-      {name:'Custom Handmade Outfit', price:5000, img:'dress1.jpg'}
+      { id:1, name:'Bubble High-Low Dress', price:4500, img:'bubble.jpg', stock:true },
+      { id:2, name:'3-Way Convertible Dress', price:3800, img:'3way.jpg', stock:false },
+      { id:3, name:'Custom Handmade Outfit', price:5000, img:'dress1.jpg', stock:true }
     ];
 
+    // load cart from localStorage so it persists across pages
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function addToCart(productId) {
+      const p = products.find(x=>x.id===productId);
+      if(!p) return alert('Product not found');
+      if(!p.stock) return alert('Sorry — this item is out of stock.');
+      cart.push({ id:p.id, name:p.name, price:p.price });
+      saveCart();
+      displayCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index,1);
+      saveCart();
+      displayCart();
+    }
+
+    function displayCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      let total = 0;
+      cart.forEach((c, i) => {
+        total += Number(c.price);
+        cartList.innerHTML += `<li>${c.name} - KES ${c.price} <button onclick="removeFromCart(${i})">Remove</button></li>`;
+      });
+      document.getElementById('cart-total').textContent = total;
+    }
+
+    // render products with stock indicator
     const productContainer = document.getElementById('productContainer');
     products.forEach(p => {
       const div = document.createElement('div');
       div.className = 'card';
-      div.innerHTML = `<img src='${p.img}' alt='${p.name}'><p>${p.name} - KES ${p.price}</p><button onclick="addToCart('${p.name}',${p.price})">Add to Cart</button>`;
+      div.innerHTML = `
+        <img src='${p.img}' alt='${p.name}'>
+        <p>${p.name} - KES ${p.price}</p>
+        <div class="actions">
+          ${p.stock ? `<button onclick="addToCart(${p.id})">Add to Cart</button>` : `<span class="out-of-stock">Out of stock</span>`}
+          <a class="small" href="#">View</a>
+        </div>`;
       productContainer.appendChild(div);
     });
+
+    // initialize
+    displayCart();
   </script>
 </body>
 </html>
-// Remove item from cart
-function removeFromCart(index) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.splice(index, 1); // remove item at position "index"
-    localStorage.setItem("cart", JSON.stringify(cart));
-    displayCart(); // refresh cart display
-}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout — Lizian Fashion</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
+    header{background:black;color:white;padding:12px}
+    .container{max-width:700px;margin:20px auto}
+    .item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+    .total{font-weight:bold;margin-top:10px}
+    button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer}
+    .whatsapp{background:#25D366;color:white}
+    .back{background:#ddd;margin-right:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Checkout</h2>
+  </header>
+
+  <div class="container">
+    <div id="cart-list"></div>
+    <div class="total">Total: KES <span id="total">0</span></div>
+
+    <h3>Contact & Delivery</h3>
+    <label>Name</label><br>
+    <input id="name" placeholder="Your name" style="width:100%;padding:8px;margin:6px 0"><br>
+    <label>Phone (WhatsApp)</label><br>
+    <input id="phone" placeholder="07XXXXXXXX" style="width:100%;padding:8px;margin:6px 0"><br>
+    <label>Pickup / Delivery Address</label><br>
+    <textarea id="address" style="width:100%;padding:8px;margin:6px 0"></textarea>
+
+    <div style="margin-top:12px">
+      <button class="back" onclick="window.location.href='index.html'">Back to shop</button>
+      <button class="whatsapp" id="waBtn">Send order via WhatsApp</button>
+    </div>
+
+    <p class="small">We will receive your order message on WhatsApp and confirm payment & delivery details.</p>
+  </div>
+
+  <script>
+    // load cart
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartList = document.getElementById('cart-list');
+    let total = 0;
+    if(cart.length===0){ cartList.innerHTML = '<p>Your cart is empty.</p>' }
+    cart.forEach(c=>{
+      cartList.innerHTML += `<div class="item"><div>${c.name}</div><div>KES ${c.price}</div></div>`;
+      total += Number(c.price);
+    });
+    document.getElementById('total').textContent = total;
+
+    // WhatsApp send
+    // convert local number 0748508336 to international (Kenya) 254748508336
+    const sellerNumber = '254748508336';
+
+    document.getElementById('waBtn').addEventListener('click', ()=>{
+      if(cart.length===0) return alert('Cart is empty');
+      const name = document.getElementById('name').value || 'Customer';
+      const phone = document.getElementById('phone').value || '';
+      const address = document.getElementById('address').value || '';
+
+      let message = `Order from ${name}%0A`;
+      if(phone) message += `Contact: ${phone}%0A`;
+      if(address) message += `Address: ${address}%0A`;
+      message += `%0AItems:%0A`;
+      cart.forEach(c=>{ message += `${c.name} - KES ${c.price}%0A`; });
+      message += `%0ATotal: KES ${total}%0A`;
+      message += `%0AThanks%0A`;
+
+      // open WhatsApp web/mobile
+      const url = `https://wa.me/${sellerNumber}?text=${message}`;
+      window.open(url,'_blank');
+    });
+  </script>
+</body>
+        </html>
+        <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reviews — Lizian Fashion</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
+    header{background:black;color:white;padding:12px}
+    .container{max-width:800px;margin:20px auto}
+    .review{border:1px solid #eee;padding:12px;margin-bottom:10px;border-radius:6px}
+    .thumb{max-width:120px;display:block;margin-top:8px}
+  </style>
+</head>
+<body>
+  <header><h2>Customer Reviews</h2></header>
+  <div class="container">
+    <h3>Leave a review</h3>
+    <input id="rname" placeholder="Your name" style="width:100%;padding:8px;margin:6px 0"><br>
+    <label>Rating</label>
+    <select id="rating" style="padding:8px;margin:6px 0">
+      <option value="5">5 - Excellent</option>
+      <option value="4">4 - Good</option>
+      <option value="3">3 - Okay</option>
+      <option value="2">2 - Poor</option>
+      <option value="1">1 - Bad</option>
+    </select><br>
+    <textarea id="comment" placeholder="Tell others about your purchase" style="width:100%;padding:8px;margin:6px 0"></textarea><br>
+    <label>Upload a photo (optional)</label><br>
+    <input type="file" id="photo" accept="image/*"><br>
+    <img id="preview" class="thumb" style="display:none"><br>
+    <button onclick="saveReview()">Submit review</button>
+
+    <h3>All Reviews</h3>
+    <div id="reviews"></div>
+  </div>
+
+  <script>
+    const reviewsEl = document.getElementById('reviews');
+    const preview = document.getElementById('preview');
+
+    document.getElementById('photo').addEventListener('change',(e)=>{
+      const f = e.target.files[0];
+      if(!f) { preview.style.display='none'; return }
+      const reader = new FileReader();
+      reader.onload = () => { preview.src = reader.result; preview.style.display='block'; }
+      reader.readAsDataURL(f);
+    });
+
+    function loadReviews(){
+      const data = JSON.parse(localStorage.getItem('reviews')||'[]');
+      reviewsEl.innerHTML = '';
+      data.reve
