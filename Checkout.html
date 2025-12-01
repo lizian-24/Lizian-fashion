@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout — Lizian Fashion</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px}
+header{background:black;color:white;padding:12px}
+.container{max-width:700px;margin:20px auto}
+.item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee}
+.total{font-weight:bold;margin-top:10px}
+button{padding:10px 14px;border-radius:6px;border:none;cursor:pointer}
+.whatsapp{background:#25D366;color:white}
+.back{background:#ddd;margin-right:8px}
+</style>
+</head>
+<body>
+<header>
+  <h2>Checkout</h2>
+</header>
+
+<div class="container">
+  <div id="cart-list"></div>
+  <div class="total">Total: KES <span id="total">0</span></div>
+
+  <h3>Contact & Delivery</h3>
+  <label>Name</label><br>
+  <input id="name" placeholder="Your name"><br>
+  <label>Phone (WhatsApp)</label><br>
+  <input id="phone" placeholder="07XXXXXXXX"><br>
+  <label>Pickup / Delivery Address</label><br>
+  <textarea id="address"></textarea>
+
+  <div style="margin-top:12px">
+    <button class="back" onclick="window.location.href='index.html'">Back to shop</button>
+    <button class="whatsapp" id="waBtn">Send order via WhatsApp</button>
+  </div>
+
+  <p class="small">We will receive your order message on WhatsApp and confirm payment & delivery details.</p>
+</div>
+
+<script>
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartList = document.getElementById('cart-list');
+let total = 0;
+
+if(cart.length===0){ cartList.innerHTML = '<p>Your cart is empty.</p>' }
+
+cart.forEach(c=>{
+  const itemTotal = c.price * c.qty;
+  total += itemTotal;
+  cartList.innerHTML += `<div class="item"><div>${c.name} (${c.color}) x${c.qty}</div><div>KES ${itemTotal}</div></div>`;
+});
+
+document.getElementById('total').textContent = total;
+
+const sellerNumber = '254748508336';
+
+document.getElementById('waBtn').addEventListener('click', ()=>{
+  if(cart.length===0) return alert('Cart is empty');
+  const name = document.getElementById('name').value || 'Customer';
+  const phone = document.getElementById('phone').value || '';
+  const address = document.getElementById('address').value || '';
+
+  let message = `Order from ${name}%0A`;
+  if(phone) message += `Contact: ${phone}%0A`;
+  if(address) message += `Address: ${address}%0A`;
+  message += `%0AItems:%0A`;
+  cart.forEach(c=>{
+    const itemTotal = c.price * c.qty;
+    message += `${c.name} (${c.color}) x${c.qty} - KES ${itemTotal}%0A`;
+  });
+  message += `%0ATotal: KES ${total}%0AThanks%0A`;
+
+  window.open(`https://wa.me/${sellerNumber}?text=${message}`,'_blank');
+
+  // Optional: clear cart after sending
+  // localStorage.removeItem('cart');
+  // window.location.href='index.html';
+});
+</script>
+</body>
+</html>
