@@ -177,6 +177,33 @@ products.forEach(p => {
 });
 
 displayCart();
+  <script>
+  async function loadProducts() {
+    const response = await fetch('products.json');
+    const products = await response.json();
+
+    const container = document.getElementById('products');
+    container.innerHTML = '';
+
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>Price: Ksh ${product.price}</p>
+        <p>${product.description}</p>
+        <select>
+          <option value="">Select Size</option>
+          ${product.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
+        </select>
+        <button>Add to Cart</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  loadProducts();
 </script></body>
 </html>
 
