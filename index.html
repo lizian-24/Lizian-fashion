@@ -22,18 +22,49 @@
       font-weight: bold;
     }
 
+    .hero {
+      background: url('images/hero.jpg') center/cover no-repeat;
+      height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 0 0 10px black;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      margin: 0;
+    }
+
+    .hero p {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      background: black;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+    }
+
     .products {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 15px;
       padding: 20px;
+      text-align: center;
     }
 
     .product-card {
       background: #f8f8f8;
       border-radius: 10px;
       padding: 10px;
-      text-align: center;
       box-shadow: 0 0 4px rgba(0,0,0,0.1);
     }
 
@@ -50,15 +81,9 @@
       margin: 10px 0;
     }
 
-    .btn {
-      display: block;
-      width: 100%;
-      background: black;
-      color: white;
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 10px;
-      text-decoration: none;
+    select {
+      padding: 5px;
+      margin: 5px 2px;
     }
 
     /* SIZE CHART POPUP */
@@ -88,6 +113,7 @@
       border-radius: 6px;
       margin-top: 15px;
       display: inline-block;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -96,7 +122,18 @@
 
 <header>LIZIAN FASHION</header>
 
-<section id="products" class="products"></section>
+<section class="hero">
+  <h1>Handmade • Custom • Unique</h1>
+  <p>Designed by Lizian — created with passion.</p>
+  <button class="btn" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">
+    Shop My Designs
+  </button>
+</section>
+
+<section id="productsSection">
+  <h2 style="text-align:center; margin-top:20px;">Featured Designs</h2>
+  <div id="products" class="products"></div>
+</section>
 
 <!-- SIZE CHART MODAL -->
 <div id="sizeChartModal">
@@ -106,7 +143,6 @@
     <p><b>Medium (M)</b><br>Bust 36–38" • Waist 30–32" • Hips 38–40"</p>
     <p><b>Large (L)</b><br>Bust 38–40" • Waist 32–34" • Hips 40–42"</p>
     <p><b>XL (XL)</b><br>Bust 40–43" • Waist 34–37" • Hips 42–45"</p>
-
     <div class="closeBtn" onclick="closeSizeChart()">Close</div>
   </div>
 </div>
@@ -118,7 +154,7 @@ async function loadProducts() {
     const response = await fetch('products.json');
     const products = await response.json();
 
-    let container = document.getElementById("products");
+    const container = document.getElementById("products");
     container.innerHTML = "";
 
     products.forEach(product => {
@@ -128,6 +164,37 @@ async function loadProducts() {
           <h3>${product.name}</h3>
           <div class="price">Ksh ${product.price}</div>
 
+          <div>
+            <label>Size:</label>
+            <select id="size-${product.name}">
+              <option>S</option>
+              <option>M</option>
+              <option>L</option>
+              <option>XL</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Color:</label>
+            <select id="color-${product.name}">
+              <option>Black</option>
+              <option>White</option>
+              <option>Red</option>
+              <option>Blue</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Quantity:</label>
+            <select id="qty-${product.name}">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+
           <button class="btn" onclick="openSizeChart()">View Size Chart</button>
 
           <button class="btn" onclick="addToCart('${product.name}', ${product.price})">
@@ -136,11 +203,14 @@ async function loadProducts() {
         </div>
       `;
     });
-  } 
-  catch (err) {
+
+  } catch (err) {
     console.error("Error loading products:", err);
+    const container = document.getElementById("products");
+    container.innerHTML = "<p style='color:red; text-align:center;'>Failed to load products. Make sure products.json exists and images are in the correct folder.</p>";
   }
 }
+
 loadProducts();
 
 /* SIZE CHART POPUP */
@@ -153,10 +223,14 @@ function closeSizeChart() {
 
 /* SIMPLE CART */
 function addToCart(name, price) {
+  const size = document.getElementById(`size-${name}`).value;
+  const color = document.getElementById(`color-${name}`).value;
+  const qty = Number(document.getElementById(`qty-${name}`).value);
+
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cart.push({ name, price });
+  cart.push({ name, price, size, color, qty });
   localStorage.setItem("cart", JSON.stringify(cart));
-  alert(name + " added to cart!");
+  alert(`${name} (${size}, ${color}) x${qty} added to cart!`);
 }
 </script>
 
