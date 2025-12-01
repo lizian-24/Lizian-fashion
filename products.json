@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Bubble High-Low Dress",
+    "price": 4500,
+    "image": "images/bubble.jpg"
+  },
+  {
+    "name": "3-Way Dress",
+    "price": 3800,
+    "image": "images/3way.jpg"
+  }
+]
