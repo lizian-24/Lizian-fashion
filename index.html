@@ -29,7 +29,7 @@ nav a, nav button { padding:10px 14px; margin-left:10px; cursor:pointer; border:
 .out-of-stock { color:crimson; font-weight:bold; }
 footer { background:black; color:white; padding:15px; text-align:center; margin-top:30px; }
 .small { font-size:13px; color:#555; cursor:pointer; }
-.size-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; border:2px solid #333; padding:20px; z-index:1000; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.5); }
+.size-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; border:2px solid #333; padding:20px; z-index:1000; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.5); max-width:350px; }
 .size-popup table { width:100%; border-collapse:collapse; margin-top:10px; }
 .size-popup th, .size-popup td { border:1px solid #ddd; padding:8px; text-align:center; }
 .size-popup th { background:#f0f0f0; }
@@ -63,22 +63,39 @@ footer { background:black; color:white; padding:15px; text-align:center; margin-
 </div>
 </section><div class="overlay" id="overlay"></div>
 <div class="size-popup" id="sizePopup">
-<h3>Size Chart</h3>
-<table>
-<tr><th>Size</th><th>Bust (in)</th><th>Waist (in)</th><th>Hip (in)</th></tr>
-<tr><td>S</td><td>34</td><td>28</td><td>36</td></tr>
-<tr><td>M</td><td>36</td><td>30</td><td>38</td></tr>
-<tr><td>L</td><td>38</td><td>32</td><td>40</td></tr>
-<tr><td>XL</td><td>40</td><td>34</td><td>42</td></tr>
+<h3 id="sizePopupTitle">Size Chart</h3>
+<table id="sizePopupTable">
+<tr><th>Size</th><th>Bust (in)</th><th>Waist (in)</th><th>Hip (in)</th><th>Length (in)</th></tr>
 </table>
 <button onclick="closeSizeChart()">Close</button>
 </div><footer>
 © 2025 Lizian Fashion — All Rights Reserved
 </footer><script>
 const products = [
-{ id:1, name:'Bubble High-Low Dress', price:4500, img:'bubble.jpg', stock:true },
-{ id:2, name:'3-Way Convertible Dress', price:3800, img:'3way.jpg', stock:false },
-{ id:3, name:'Custom Handmade Outfit', price:5000, img:'dress1.jpg', stock:true }
+{ id:1, name:'Bubble High-Low Dress', price:4500, img:'bubble.jpg', stock:true,
+  sizes:[
+    {size:'S', bust:34, waist:28, hip:36, length:40},
+    {size:'M', bust:36, waist:30, hip:38, length:41},
+    {size:'L', bust:38, waist:32, hip:40, length:42},
+    {size:'XL', bust:40, waist:34, hip:42, length:43}
+  ]
+},
+{ id:2, name:'3-Way Convertible Dress', price:3800, img:'3way.jpg', stock:false,
+  sizes:[
+    {size:'S', bust:33, waist:27, hip:35, length:38},
+    {size:'M', bust:35, waist:29, hip:37, length:39},
+    {size:'L', bust:37, waist:31, hip:39, length:40},
+    {size:'XL', bust:39, waist:33, hip:41, length:41}
+  ]
+},
+{ id:3, name:'Custom Handmade Outfit', price:5000, img:'dress1.jpg', stock:true,
+  sizes:[
+    {size:'S', bust:35, waist:29, hip:37, length:42},
+    {size:'M', bust:37, waist:31, hip:39, length:43},
+    {size:'L', bust:39, waist:33, hip:41, length:44},
+    {size:'XL', bust:41, waist:35, hip:43, length:45}
+  ]
+}
 ];
 
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -113,7 +130,16 @@ function displayCart() {
   document.getElementById('cart-total').textContent = total;
 }
 
-function openSizeChart() {
+function openSizeChart(productId) {
+  const p = products.find(x=>x.id===productId);
+  const table = document.getElementById('sizePopupTable');
+  table.innerHTML = '<tr><th>Size</th><th>Bust (in)</th><th>Waist (in)</th><th>Hip (in)</th><th>Length (in)</th></tr>';
+  p.sizes.forEach(s=>{
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${s.size}</td><td>${s.bust}</td><td>${s.waist}</td><td>${s.hip}</td><td>${s.length}</td>`;
+    table.appendChild(row);
+  });
+  document.getElementById('sizePopupTitle').textContent = `${p.name} - Size Chart`;
   document.getElementById('overlay').style.display='block';
   document.getElementById('sizePopup').style.display='block';
 }
@@ -145,7 +171,7 @@ products.forEach(p => {
         </select>
         <button onclick="addToCart(${p.id})">Add</button>
       ` : `<span class="out-of-stock">Out of stock</span>`}
-      <span class="small" onclick="openSizeChart()">View Size Chart</span>
+      <span class="small" onclick="openSizeChart(${p.id})">View Size Chart</span>
     </div>`;
   productContainer.appendChild(div);
 });
