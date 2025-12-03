@@ -2,21 +2,33 @@
   {
     "name": "Bubble High-Low Dress",
     "price": 4500,
-    "image": "images/bubble.jpg",
+    "images": [
+      "images/bubble1.jpg",
+      "images/bubble2.jpg",
+      "images/bubble3.jpg"
+    ],
     "sizes": ["S", "M", "L", "XL"],
     "colors": ["Black", "White", "Red", "Blue"]
   },
   {
     "name": "3-Way Convertible Dress",
     "price": 3800,
-    "image": "images/3way.jpg",
+    "images": [
+      "images/3way1.jpg",
+      "images/3way2.jpg",
+      "images/3way3.jpg"
+    ],
     "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "White", "Pink", "yellow", "Green"]
+    "colors": ["Black", "White", "Pink", "Yellow", "Green"]
   },
   {
     "name": "Custom Handmade Outfit",
     "price": 5000,
-    "image": "images/dress1.jpg",
+    "images": [
+      "images/dress1.jpg",
+      "images/dress1b.jpg",
+      "images/dress1c.jpg"
+    ],
     "sizes": ["S", "M", "L", "XL"],
     "colors": ["Red", "Blue", "Yellow", "White"]
   }
