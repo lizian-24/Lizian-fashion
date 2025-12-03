@@ -32,15 +32,15 @@
     "sizes": ["S", "M", "L", "XL"],
     "colors": ["Red", "Blue", "Yellow", "White"]
   },
+  {
+    "name": "Draped Mini Bodycon Dress",
+    "price": 4200,
+    "images": [
+      "images/draped1.jpg",
+      "images/draped2.jpg",
+      "images/draped3.jpg"
+    ],
+    "sizes": ["S", "M", "L", "XL"],
+    "colors": ["Black", "Red", "White", "Blue"]
+  }
 ]
-{
-  "name": "Draped Mini Bodycon Dress",
-  "price": 4200,
-  "images": [
-    "images/draped1.jpg",
-    "images/draped2.jpg",
-    "images/draped3.jpg"
-  ],
-  "sizes": ["S", "M", "L", "XL"],
-  "colors": ["Black", "Red", "White", "Blue"]
-}
