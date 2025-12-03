@@ -57,6 +57,22 @@ footer { background:black; color:pink; padding:15px; text-align:center; margin-t
 
 <section class="section" id="productsSection">
 <h2>Featured Designs</h2>
+
+<!-- Search and Category Filter -->
+<div style="margin-bottom:15px;">
+  <input type="text" id="searchInput" placeholder="Search products..." style="padding:8px; width:60%; max-width:300px; border:1px solid #ccc; border-radius:5px;">
+  
+  <select id="categoryFilter" style="padding:8px; margin-left:10px; border:1px solid #ccc; border-radius:5px;">
+    <option value="All">All Categories</option>
+    <option value="Dress">Dress</option>
+    <option value="Skirts">Skirts</option>
+    <option value="Suits">Suits</option>
+    <option value="Bags">Bags</option>
+    <option value="Jewellery">Jewellery</option>
+    <option value="Accessories">Accessories</option>
+  </select>
+</div>
+
 <div class="products" id="products"></div>
 </section>
 
@@ -82,109 +98,12 @@ footer { background:black; color:pink; padding:15px; text-align:center; margin-t
 <footer>© 2025 Lizian Fashion — All Rights Reserved</footer>
 
 <script>
-// Load products dynamically
-async function loadProducts() {
-  try {
-    const res = await fetch('products.json');
-    const products = await res.json();
-    const container = document.getElementById('products');
-    container.innerHTML = '';
-
-    products.forEach((product, index) => {
-      let sizeOptions = product.sizes.map(s => `<option>${s}</option>`).join('');
-      let colorOptions = product.colors.map(c => `<option>${c}</option>`).join('');
-
-      const images = product.images || [product.image];
-
-      container.innerHTML += `
-      <div class="product-card">
-
-        <!-- Image Slider Wrapper -->
-        <div style="position:relative; width:100%; height:260px; overflow:hidden;">
-
-          <!-- Main Image -->
-          <img id="slider-${index}" 
-               src="${images[0]}" 
-               style="width:100%; height:260px; object-fit:cover;">
-
-          <!-- Prev Button -->
-          <button onclick="slidePrev(${index})"
-            style="position:absolute; top:50%; left:10px; transform:translateY(-50%);
-                   background:black; color:white; border:none; padding:6px 10px; 
-                   border-radius:5px; cursor:pointer; opacity:0.7;">
-            ❮
-          </button>
-
-          <!-- Next Button -->
-          <button onclick="slideNext(${index})"
-            style="position:absolute; top:50%; right:10px; transform:translateY(-50%);
-                   background:black; color:white; border:none; padding:6px 10px; 
-                   border-radius:5px; cursor:pointer; opacity:0.7;">
-            ❯
-          </button>
-        </div>
-
-        <h3>${product.name}</h3>
-        <p>Price: KES ${product.price}</p>
-
-        <div class="actions">
-          <select id="size-${product.name}">${sizeOptions}</select>
-          <select id="color-${product.name}">${colorOptions}</select>
-          <select id="qty-${product.name}">
-            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-          </select>
-          <button onclick="addToCart('${product.name}', ${product.price})">Add</button>
-          <span class="small" onclick="openSizeChart('${product.name}')">View Size Chart</span>
-        </div>
-
-      </div>
-      `;
-
-      // Store slider images globally
-      sliderData[index] = {
-        images: images,
-        current: 0
-      };
-    });
-
-  } catch (err) {
-    console.error("Error loading products:", err);
-    document.getElementById('products').innerHTML = "<p style='color:red;text-align:center;'>Failed to load products.</p>";
-  }
-}
-
-// --- IMAGE SLIDER LOGIC ---
+// GLOBAL SLIDER DATA
 let sliderData = {};
 
-function slideNext(id) {
-  const data = sliderData[id];
-  data.current = (data.current + 1) % data.images.length;
-  document.getElementById(`slider-${id}`).src = data.images[data.current];
-}
-
-function slidePrev(id) {
-  const data = sliderData[id];
-  data.current = (data.current - 1 + data.images.length) % data.images.length;
-  document.getElementById(`slider-${id}`).src = data.images[data.current];
-}
-
-// CART LOGIC
+// CART
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
 function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
-
-function addToCart(name, price) {
-  const size = document.getElementById(`size-${name}`).value;
-  const color = document.getElementById(`color-${name}`).value;
-  const qty = Number(document.getElementById(`qty-${name}`).value);
-  cart.push({ name, price, size, color, qty });
-  saveCart();
-  displayCart();
-  alert(`${name} (${size}, ${color}) x${qty} added to cart!`);
-}
-
-function removeFromCart(index) { cart.splice(index, 1); saveCart(); displayCart(); }
-
 function displayCart() {
   const cartList = document.getElementById('cart-items');
   cartList.innerHTML = '';
@@ -197,6 +116,16 @@ function displayCart() {
   });
   document.getElementById('cart-total').textContent = total;
 }
+function addToCart(name, price) {
+  const size = document.getElementById(`size-${name}`).value;
+  const color = document.getElementById(`color-${name}`).value;
+  const qty = Number(document.getElementById(`qty-${name}`).value);
+  cart.push({ name, price, size, color, qty });
+  saveCart();
+  displayCart();
+  alert(`${name} (${size}, ${color}) x${qty} added to cart!`);
+}
+function removeFromCart(index) { cart.splice(index, 1); saveCart(); displayCart(); }
 
 // SIZE CHART
 function openSizeChart(productName) {
@@ -207,20 +136,89 @@ function openSizeChart(productName) {
     '<tr><td>M</td><td>36-38</td><td>30-32</td><td>38-40</td><td>41</td></tr>' +
     '<tr><td>L</td><td>38-40</td><td>32-34</td><td>40-42</td><td>42</td></tr>' +
     '<tr><td>XL</td><td>40-43</td><td>34-37</td><td>42-45</td><td>43</td></tr>';
-
   document.getElementById('sizePopupTitle').textContent = productName + ' - Size Chart';
   document.getElementById('overlay').style.display = 'block';
   document.getElementById('sizePopup').style.display = 'block';
 }
-
 function closeSizeChart() {
   document.getElementById('overlay').style.display = 'none';
   document.getElementById('sizePopup').style.display = 'none';
 }
 
-loadProducts();
+// --- IMAGE SLIDER LOGIC ---
+function slideNext(id) {
+  const data = sliderData[id];
+  data.current = (data.current + 1) % data.images.length;
+  document.getElementById(`slider-${id}`).src = data.images[data.current];
+}
+function slidePrev(id) {
+  const data = sliderData[id];
+  data.current = (data.current - 1 + data.images.length) % data.images.length;
+  document.getElementById(`slider-${id}`).src = data.images[data.current];
+}
+
+// --- PRODUCTS LOAD & FILTER ---
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+
+async function loadProductsFiltered() {
+  try {
+    const res = await fetch('products.json');
+    const products = await res.json();
+    const filtered = products.filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(searchInput.value.toLowerCase());
+      const matchesCategory = categoryFilter.value === 'All' || p.category === categoryFilter.value;
+      return matchesSearch && matchesCategory;
+    });
+    displayProducts(filtered);
+  } catch(err) {
+    console.error(err);
+    document.getElementById('products').innerHTML = "<p style='color:red;text-align:center;'>Failed to load products.</p>";
+  }
+}
+
+function displayProducts(products) {
+  const container = document.getElementById('products');
+  container.innerHTML = '';
+  products.forEach((product, index) => {
+    let sizeOptions = product.sizes.map(s => `<option>${s}</option>`).join('');
+    let colorOptions = product.colors.map(c => `<option>${c}</option>`).join('');
+    const images = product.images || [product.image];
+
+    container.innerHTML += `
+      <div class="product-card">
+        <div style="position:relative; width:100%; height:260px; overflow:hidden;">
+          <img id="slider-${index}" src="${images[0]}" style="width:100%; height:260px; object-fit:cover;">
+          <button onclick="slidePrev(${index})" style="position:absolute; top:50%; left:10px; transform:translateY(-50%); background:black; color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer; opacity:0.7;">❮</button>
+          <button onclick="slideNext(${index})" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); background:black; color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer; opacity:0.7;">❯</button>
+        </div>
+        <h3>${product.name}</h3>
+        <p>Price: KES ${product.price}</p>
+        <div class="actions">
+          <select id="size-${product.name}">${sizeOptions}</select>
+          <select id="color-${product.name}">${colorOptions}</select>
+          <select id="qty-${product.name}">
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+          </select>
+          <button onclick="addToCart('${product.name}', ${product.price})">Add</button>
+          <span class="small" onclick="openSizeChart('${product.name}')">View Size Chart</span>
+        </div>
+      </div>
+    `;
+
+    sliderData[index] = { images: images, current: 0 };
+  });
+}
+
+// Listen for search & category changes
+searchInput.addEventListener('input', loadProductsFiltered);
+categoryFilter.addEventListener('change', loadProductsFiltered);
+
+// Initial load
+loadProductsFiltered();
 displayCart();
-</script>                                                                                                                   </script>
+</script>
+
 </body>
-</html>
+      </html>
 
