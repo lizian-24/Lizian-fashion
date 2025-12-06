@@ -7,9 +7,20 @@
       "images/bubble2.jpg",
       "images/bubble3.jpg"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "White", "Red", "Blue"],
-    "category": "Dress"
+    "category": "dress",
+    "soldOut": false,
+    "sizes": {
+      "S": true,
+      "M": true,
+      "L": true,
+      "XL": false
+    },
+    "colors": {
+      "Black": true,
+      "White": true,
+      "Red": true,
+      "Blue": false
+    }
   },
   {
     "name": "3-Way Convertible Dress",
@@ -19,9 +30,21 @@
       "images/3way2.jpg",
       "images/3way3.jpg"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "White", "Pink", "Yellow", "Green"],
-    "category": "Dress"
+    "category": "dress",
+    "soldOut": false,
+    "sizes": {
+      "S": true,
+      "M": true,
+      "L": true,
+      "XL": true
+    },
+    "colors": {
+      "Black": true,
+      "White": true,
+      "Pink": true,
+      "Yellow": true,
+      "Green": true
+    }
   },
   {
     "name": "Custom Handmade Suit",
@@ -31,9 +54,20 @@
       "images/suit1b.jpg",
       "images/suit1c.jpg"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Red", "Blue", "Yellow", "White"],
-    "category": "Suits"
+    "category": "suits",
+    "soldOut": false,
+    "sizes": {
+      "S": false,
+      "M": true,
+      "L": true,
+      "XL": true
+    },
+    "colors": {
+      "Red": true,
+      "Blue": true,
+      "Yellow": false,
+      "White": true
+    }
   },
   {
     "name": "Draped Mini Bodycon Dress",
@@ -43,9 +77,20 @@
       "images/draped2.jpg",
       "images/draped3.jpg"
     ],
-    "sizes": ["S", "M", "L", "XL"],
-    "colors": ["Black", "Red", "White", "Blue"],
-    "category": "Dress"
+    "category": "dress",
+    "soldOut": false,
+    "sizes": {
+      "S": true,
+      "M": true,
+      "L": false,
+      "XL": false
+    },
+    "colors": {
+      "Black": true,
+      "Red": true,
+      "White": false,
+      "Blue": true
+    }
   },
   {
     "name": "Leather Tote Bag",
@@ -54,9 +99,13 @@
       "images/bag1.jpg",
       "images/bag2.jpg"
     ],
-    "sizes": [],
-    "colors": ["Brown", "Black"],
-    "category": "Bags"
+    "category": "bags",
+    "soldOut": false,
+    "sizes": {},
+    "colors": {
+      "Brown": true,
+      "Black": true
+    }
   },
   {
     "name": "Silk Skater Skirt",
@@ -65,9 +114,18 @@
       "images/skirt1.jpg",
       "images/skirt2.jpg"
     ],
-    "sizes": ["S", "M", "L"],
-    "colors": ["Red", "Black", "Blue"],
-    "category": "Skirts"
+    "category": "skirts",
+    "soldOut": false,
+    "sizes": {
+      "S": true,
+      "M": true,
+      "L": true
+    },
+    "colors": {
+      "Red": true,
+      "Black": true,
+      "Blue": false
+    }
   },
   {
     "name": "Gold Hoop Earrings",
@@ -76,9 +134,12 @@
       "images/jewellery1.jpg",
       "images/jewellery2.jpg"
     ],
-    "sizes": [],
-    "colors": ["Gold"],
-    "category": "Jewellery"
+    "category": "accessories",
+    "soldOut": true,
+    "sizes": {},
+    "colors": {
+      "Gold": false
+    }
   },
   {
     "name": "Leather Belt",
@@ -86,8 +147,16 @@
     "images": [
       "images/accessory1.jpg"
     ],
-    "sizes": ["S", "M", "L"],
-    "colors": ["Black", "Brown"],
-    "category": "Accessories"
+    "category": "accessories",
+    "soldOut": false,
+    "sizes": {
+      "S": true,
+      "M": false,
+      "L": true
+    },
+    "colors": {
+      "Black": true,
+      "Brown": true
+    }
   }
 ]
